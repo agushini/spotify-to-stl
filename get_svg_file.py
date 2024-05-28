@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
 import time
 import os
 import errno
@@ -40,12 +42,26 @@ def get_svg_code(url):
     get_code_btn.click()
     time.sleep(2)
 
-    open_color_men = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div/div[2]/div[1]/span')
-    open_color_men.click()
+    # dismiss the acknowledgements modal 
+    # scroll to bottom of modal
+    div_modal_inner = driver.find_element_by_class_name('modal-content')
+    div_modal_inner.click()
+    modal_accept = driver.find_element_by_class_name('accept-button')
+    
+    ActionChains(driver)\
+        .scroll_to_element(modal_accept)\
+        .perform()
 
-    bg_col = driver.find_element_by_xpath(
-        '/html/body/div[2]/div[4]/div[1]/div/div[2]/div[1]/div/div/div[2]/span[1]/div/span/div')
-    bg_col.click()
+    # click accept
+    modal_accept.click()
+    
+
+    # open_color_men = driver.find_element_by_class_name('color-picker-btn')
+    # open_color_men.click()
+
+    # bg_col = driver.find_element_by_xpath(
+    #     '/html/body/div[2]/div[4]/div[1]/div/div[2]/div[1]/div/div/div[2]/span[1]/div/span/div')
+    # bg_col.click()
 
     bar_col = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div/div[2]/div[2]/input')
     bar_col.click()
