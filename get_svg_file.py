@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 import time
 import os
 import errno
@@ -30,7 +31,7 @@ def get_svg_code(url):
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--headless")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                         " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
+                         " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.77 Safari/537.36")
     driver = webdriver.Chrome(options=options)
 
     driver.get("https://www.spotifycodes.com/")
@@ -43,25 +44,20 @@ def get_svg_code(url):
     time.sleep(2)
 
     # dismiss the acknowledgements modal 
-    # scroll to bottom of modal
-    div_modal_inner = driver.find_element_by_class_name('modal-content')
-    div_modal_inner.click()
+    # scroll to bottom of modal and wait to give it time to catch up
+    link_in_modal = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div[2]/div/div[1]/h2[2]/a')
+    link_in_modal.send_keys(Keys.END)
+    time.sleep(2)
+   
     modal_accept = driver.find_element_by_class_name('accept-button')
-    
-    ActionChains(driver)\
-        .scroll_to_element(modal_accept)\
-        .perform()
 
     # click accept
     modal_accept.click()
-    
 
-    # open_color_men = driver.find_element_by_class_name('color-picker-btn')
-    # open_color_men.click()
-
-    # bg_col = driver.find_element_by_xpath(
-    #     '/html/body/div[2]/div[4]/div[1]/div/div[2]/div[1]/div/div/div[2]/span[1]/div/span/div')
-    # bg_col.click()
+    bg_color_input = driver.find_element_by_name('back-color')
+    bg_color_input.clear()
+    bg_color_input.send_keys('#FFFFFF')
+    bg_color_input.send_keys(Keys.ENTER)
 
     bar_col = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div/div[2]/div[2]/input')
     bar_col.click()
@@ -77,7 +73,6 @@ def get_svg_code(url):
     format_png = driver.find_element_by_xpath('//html/body/div[2]/div[4]/div[1]/div/div[2]/div[4]/div/div[1]')
     format_png.click()
 
-    # time.sleep(10)
     download = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div/div[1]/a')
     download_btn = driver.find_element_by_xpath("/html/body/div[2]/div[4]/div[1]/div/div[1]/a/button")
 
