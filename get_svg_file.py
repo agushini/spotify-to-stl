@@ -29,30 +29,38 @@ def get_svg_code(url):
         "safebrowsing.enabled": True
     })
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    #options.add_argument("--headless")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
                          " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.77 Safari/537.36")
     driver = webdriver.Chrome(options=options)
 
     driver.get("https://www.spotifycodes.com/")
-    spotify_url = driver.find_element_by_xpath('/html/body/div[2]/div[3]/div[1]/div/div[2]/input')
-    spotify_url.send_keys('')
+    spotify_url = driver.find_element_by_id('playlist-code')
+    spotify_url.clear()
     spotify_url.send_keys(url)
 
-    get_code_btn = driver.find_element_by_xpath('/html/body/div[2]/div[3]/div[1]/div/div[2]/button')
-    get_code_btn.click()
+
+    get_code_btn = driver.find_element_by_css_selector('.l-btn.uri-button') 
+    get_code_btn.send_keys(Keys.ENTER)
     time.sleep(2)
 
     # dismiss the acknowledgements modal 
     # scroll to bottom of modal and wait to give it time to catch up
-    link_in_modal = driver.find_element_by_xpath('/html/body/div[2]/div[4]/div[1]/div[2]/div/div[1]/h2[2]/a')
-    link_in_modal.send_keys(Keys.END)
-    time.sleep(2)
-   
+    #link_in_modal = driver.find_element_by_partial_link_text('Terms and Conditions')
+    #link_in_modal.send_keys(Keys.SHIFT)
+    #link_in_modal.send_keys(Keys.END)
     modal_accept = driver.find_element_by_class_name('accept-button')
 
+    frame = driver.find_element_by_id('modal-content')
+    driver.switch_to.frame(frame)
+    driver.execute_script("arguments[0].scrollIntoView()", modal_accept)
+    time.sleep(2)
+   
     # click accept
     modal_accept.click()
+
+    #switch out of frame mode
+    driver.switch_to.default_content()
 
     bg_color_input = driver.find_element_by_name('back-color')
     bg_color_input.clear()
